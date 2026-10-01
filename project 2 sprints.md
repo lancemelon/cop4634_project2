@@ -3,15 +3,15 @@
 Outline only — no implementation. Each task names what needs to exist; you look up the how.
 
 ## Sprint 1 — Core single-threaded logic
-- [ ] Set up repo structure: `mt-collatz.cpp`, `Makefile`, `README`
-- [ ] Write a `Makefile` with `-g -Wall`, a default build target, and a `clean` rule
-- [ ] Implement argument parsing: `N` (range), `T` (thread count), optional `-nolock` flag
+- [X] Set up repo structure: `mt-collatz.cpp`, `Makefile`, `README`
+- [X] Write a `Makefile` with `-g -Wall`, a default build target, and a `clean` rule
+- [X] Implement argument parsing: `N` (range), `T` (thread count), optional `-nolock` flag
   - Validate argument count/order; decide what happens on bad input
-- [ ] Implement `collatz_stopping_time(n)`: applies `f(n) = n/2` (even) or `3n+1` (odd), counts steps until reaching 1
-- [ ] Implement a global histogram array/structure sized for stopping times 0–1000, zero-initialized before any computation
-- [ ] Single-threaded version: loop `n` from 1 to `N`, compute stopping time, increment histogram bucket
-- [ ] Print histogram to stdout in `k,frequency` format (k = 0..1000)
-- [ ] Manual sanity check: n=1 → stopping time 0 → `0,1`
+- [X] Implement `collatz_stopping_time(n)`: applies `f(n) = n/2` (even) or `3n+1` (odd), counts steps until reaching 1
+- [X] Implement a global histogram array/structure sized for stopping times 0–1000, zero-initialized before any computation
+- [X] Single-threaded version: loop `n` from 1 to `N`, compute stopping time, increment histogram bucket
+- [X] Print histogram to stdout in `k,frequency` format (k = 0..1000)
+- [X] Manual sanity check: n=1 → stopping time 0 → `0,1`
 
 ## Sprint 2 — Threading
 - [ ] Decide on the global shared `COUNTER` variable (starts at 1, ends at N) representing "next number to claim"
