@@ -1,0 +1,5 @@
+*.pdf
+
+mt-collatz.dSYM
+
+temp.md
