@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <thread>
+
+unsigned long long COUNTER = 1;
 
 unsigned long long collatz_stopping_time(unsigned long long n) {
     unsigned long long steps = 0;
@@ -17,6 +20,18 @@ unsigned long long collatz_stopping_time(unsigned long long n) {
     }
 
     return steps;
+}
+
+void worker(unsigned long long N, int tally[]) {
+    while (COUNTER <= N) {
+        unsigned long long n = COUNTER;
+
+        COUNTER++;
+
+        unsigned long long steps = collatz_stopping_time(n);
+
+        tally[steps]++;
+    }
 }
 
 int main(int argc, char* argv[]) {
@@ -44,8 +59,16 @@ int main(int argc, char* argv[]) {
     // Stopping times tally
     int tally[max_stopping_time + 1] = {0};
 
-    for (unsigned long long i = 1; i <= N; i++) {
-        tally[collatz_stopping_time(i)]++;
+    std::vector<std::thread> threads;
+
+    // Launch T workers.
+    for (int i = 0; i < T; i++) {
+        threads.emplace_back(worker, N, tally);
+    }
+
+    // Wait for every worker before printing the histogram.
+    for (std::thread& thread : threads) {
+        thread.join();
     }
 
     for (int i = 0; i <= max_stopping_time; i++) {
