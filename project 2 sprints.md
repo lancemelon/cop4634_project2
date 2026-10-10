@@ -14,17 +14,19 @@ Outline only — no implementation. Each task names what needs to exist; you loo
 - [X] Manual sanity check: n=1 → stopping time 0 → `0,1`
 
 ## Sprint 2 — Threading
-- [ ] Decide on the global shared `COUNTER` variable (starts at 1, ends at N) representing "next number to claim"
-- [ ] Implement a worker thread function: loop { claim next COUNTER value, compute stopping time, record in histogram, repeat until COUNTER > N }
-- [ ] Launch `T` threads using the C++ `<thread>` library with the worker function
-- [ ] Join all worker threads on the main thread before proceeding to output
-- [ ] Verify correctness with T=1 (should match Sprint 1 single-threaded output exactly)
+- [X] Decide on the global shared `COUNTER` variable (starts at 1, ends at N) representing "next number to claim"
+- [X] Implement a worker thread function: loop { claim next COUNTER value, compute stopping time, record in histogram, repeat until COUNTER > N }
+- [X] Launch `T` threads using the C++ `<thread>` library with the worker function
+- [X] Join all worker threads on the main thread before proceeding to output
+- [X] Verify correctness with T=1 (should match Sprint 1 single-threaded output exactly)
 
 ## Sprint 3 — Synchronization (race condition handling)
-- [ ] Identify the two shared-resource race conditions: (1) reading/incrementing `COUNTER`, (2) incrementing a histogram bucket
-- [ ] Introduce a `<mutex>` lock to protect `COUNTER` increment (and histogram update, if not using an atomic/lock-free approach)
-- [ ] Implement `-nolock` mode: same worker logic but skip locking entirely, so races are reproducible
-- [ ] Test with T=4 or T=8 and verify: with locks, total counted numbers == N, no duplicate/skipped values; without locks, observe inconsistent/incorrect totals across runs
+- [X] Identify the two shared-resource race conditions: (1) reading/incrementing `COUNTER`, (2) incrementing a histogram bucket
+- [X] Introduce a `<mutex>` lock to protect `COUNTER` increment (and histogram update, if not using an atomic/lock-free approach)
+- [X] Implement `-nolock` mode: same worker logic but skip locking entirely, so races are reproducible
+- [X] Test with T=4 or T=8 and verify: with locks, total counted numbers == N, no duplicate/skipped values; without locks, observe inconsistent/incorrect totals across runs
+  - Verified N=100000: five locked runs each with T=1, 4, and 8 matched an independent single-threaded reference histogram exactly, with totals of 100000.
+  - Five unlocked runs each with T=4 and T=8 all produced incorrect histograms. Totals ranged from 116862 to 119400 (T=4) and 151631 to 163674 (T=8).
 
 ## Sprint 4 — Timing instrumentation
 - [ ] Add `clock_gettime()` (real-time clock) calls bracketing thread creation through thread join + histogram completion
