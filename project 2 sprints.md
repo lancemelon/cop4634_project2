@@ -29,10 +29,12 @@ Outline only — no implementation. Each task names what needs to exist; you loo
   - Five unlocked runs each with T=4 and T=8 all produced incorrect histograms. Totals ranged from 116862 to 119400 (T=4) and 151631 to 163674 (T=8).
 
 ## Sprint 4 — Timing instrumentation
-- [ ] Add `clock_gettime()` (real-time clock) calls bracketing thread creation through thread join + histogram completion
-- [ ] Handle nanosecond "borrow" when subtracting start/end times (seconds and nanoseconds don't subtract cleanly)
-- [ ] Print elapsed time to stderr in `N,T,seconds.nanoseconds` format
-- [ ] Confirm stdout (histogram) and stderr (timing) can be redirected independently (`2>`, `>`, `2>>`, `>>`)
+- [X] Add `clock_gettime()` (real-time clock) calls bracketing thread creation through thread join + histogram completion
+- [X] Handle nanosecond "borrow" when subtracting start/end times (seconds and nanoseconds don't subtract cleanly)
+- [X] Print elapsed time to stderr in `N,T,seconds.nanoseconds` format
+- [X] Confirm stdout (histogram) and stderr (timing) can be redirected independently (`2>`, `>`, `2>>`, `>>`)
+  - Verified subtraction with and without borrowing and with zero duration; timing uses nine fractional digits in locked and unlocked modes.
+  - Locked histograms for N=100000 and T=1, 4, and 8 matched an independent reference. Separate overwrite and append redirection passed.
 
 ## Sprint 5 — Experiments & data collection
 - [ ] Choose a large N that produces measurable runtime (test a few candidates)

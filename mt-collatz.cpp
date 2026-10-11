@@ -3,9 +3,24 @@
 #include <vector>
 #include <thread>
 #include <mutex>
+#include <ctime>
+#include <iomanip>
+#include <cstdio>
 
 unsigned long long COUNTER = 1;
 std::mutex shared_mutex;
+
+timespec elapsed_time(const timespec& start, const timespec& end) {
+    timespec elapsed{end.tv_sec - start.tv_sec, end.tv_nsec - start.tv_nsec};
+
+    // Borrow one second when the ending nanosecond field is smaller.
+    if (elapsed.tv_nsec < 0) {
+        elapsed.tv_sec--;
+        elapsed.tv_nsec += 1000000000L;
+    }
+
+    return elapsed;
+}
 
 unsigned long long collatz_stopping_time(unsigned long long n) {
     unsigned long long steps = 0;
@@ -87,6 +102,13 @@ int main(int argc, char* argv[]) {
 
     std::vector<std::thread> threads;
 
+    // Measure thread creation, computation, and joining using the real-time clock.
+    timespec start{}, end{};
+    if (clock_gettime(CLOCK_REALTIME, &start) != 0) {
+        std::perror("clock_gettime (start)");
+        return 1;
+    }
+
     // Launch T workers.
     for (int i = 0; i < T; i++) {
         threads.emplace_back(worker, N, tally, use_locks);
@@ -96,6 +118,16 @@ int main(int argc, char* argv[]) {
     for (std::thread& thread : threads) {
         thread.join();
     }
+
+    if (clock_gettime(CLOCK_REALTIME, &end) != 0) {
+        std::perror("clock_gettime (end)");
+        return 1;
+    }
+
+    timespec elapsed = elapsed_time(start, end);
+    // Nine fractional digits preserve nanosecond precision in the CSV record.
+    std::cerr << N << "," << T << "," << elapsed.tv_sec << "."
+              << std::setfill('0') << std::setw(9) << elapsed.tv_nsec << "\n";
 
     for (int i = 0; i <= max_stopping_time; i++) {
         std::cout << i << "," << tally[i] << "\n";
