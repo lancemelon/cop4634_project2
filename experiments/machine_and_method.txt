@@ -1,0 +1,17 @@
+Started	2026-10-12T11:03:45.321891-05:00
+Finished	2026-10-12T11:07:28.583869-05:00
+N	3000000
+Runs per thread count and mode	10
+Measured runs	160
+CPU model	Apple M1 Pro
+Physical cores	8
+Logical CPUs	8
+RAM bytes	17179869184
+RAM GiB	16
+OS	27.0.1
+Compiler	Apple clang version 21.0.0 (clang-2100.3.34.2)
+Build flags	-std=c++17 -g -Wall -Wextra; no optimization flag
+Order	Sequential; shuffled within each of 10 rounds; random seed 4634
+Timing	Program stderr: CLOCK_REALTIME; thread creation through joining; excludes output
+Reference histogram	Separate locked T=1 run; all locked runs must match all 1001 buckets
+Unlocked interpretation	Multithreaded data races cause undefined behavior; timings are not correct-solution speedups

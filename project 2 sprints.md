@@ -37,11 +37,16 @@ Outline only — no implementation. Each task names what needs to exist; you loo
   - Locked histograms for N=100000 and T=1, 4, and 8 matched an independent reference. Separate overwrite and append redirection passed.
 
 ## Sprint 5 — Experiments & data collection
-- [ ] Choose a large N that produces measurable runtime (test a few candidates)
-- [ ] Script or manually run T = 1 through 8, with locks, 10 runs each, record times, compute averages
-- [ ] Repeat the same T=1..8 sweep with `-nolock`, 10 runs each, average
-- [ ] Record machine specs used for testing (CPU model, core/thread count, RAM) — needed for the report
+- [X] Choose a large N that produces measurable runtime (test a few candidates)
+  - Selected N=3000000 after testing N=100000, 1000000, and 3000000; pilot results in `experiments/pilot_times.txt`.
+- [X] Script or manually run T = 1 through 8, with locks, 10 runs each, record times, compute averages
+- [X] Repeat the same T=1..8 sweep with `-nolock`, 10 runs each, average
+  - All 160 measurements are in `experiments/raw_times.txt`; Excel-ready averages are in `experiments/average_times.txt`. All 80 locked histograms matched the reference; all 70 multithreaded unlocked histograms differed.
+  - A 14.682816-second locked T=4 run is retained in the average; see `experiments/timing_statistics.txt` for variability.
+- [X] Record machine specs used for testing (CPU model, core/thread count, RAM) — needed for the report
+  - Apple M1 Pro, 8 physical cores / 8 logical CPUs, 16 GiB RAM; full details in `experiments/machine_and_method.txt`.
 - [ ] Export histogram data (for one chosen N) into Excel
+  - Per user preference, data saved as tab-separated text for manual paste: `experiments/histogram.txt` (1001 buckets, total 3000000). Excel instructions are in `experiments/README.md`.
 - [ ] Build Excel chart: threads vs. average runtime, with and without locks (same chart or paired charts)
 - [ ] Build Excel chart/visual of the Collatz stopping-time histogram
 
