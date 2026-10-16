@@ -45,10 +45,10 @@ Outline only — no implementation. Each task names what needs to exist; you loo
   - A 14.682816-second locked T=4 run is retained in the average; see `experiments/timing_statistics.txt` for variability.
 - [X] Record machine specs used for testing (CPU model, core/thread count, RAM) — needed for the report
   - Apple M1 Pro, 8 physical cores / 8 logical CPUs, 16 GiB RAM; full details in `experiments/machine_and_method.txt`.
-- [ ] Export histogram data (for one chosen N) into Excel
+- [X] Export histogram data (for one chosen N) into Excel
   - Per user preference, data saved as tab-separated text for manual paste: `experiments/histogram.txt` (1001 buckets, total 3000000). Excel instructions are in `experiments/README.md`.
-- [ ] Build Excel chart: threads vs. average runtime, with and without locks (same chart or paired charts)
-- [ ] Build Excel chart/visual of the Collatz stopping-time histogram
+- [X] Build Excel chart: threads vs. average runtime, with and without locks (same chart or paired charts)
+- [X] Build Excel chart/visual of the Collatz stopping-time histogram
 
 ## Sprint 6 — Report & polish
 - [ ] Write `report.pdf` using the provided template: experiment description + machine specs, histogram visualization, threads-vs-runtime graph (locked vs. unlocked), analysis of parallel speedup, analysis of lock overhead, conclusions
