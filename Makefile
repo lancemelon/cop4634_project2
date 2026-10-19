@@ -1,5 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -g -Wall -Wextra
+LDLIBS = -pthread
 
 TARGET = mt-collatz
 

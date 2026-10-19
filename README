@@ -1,0 +1,72 @@
+COP4634 Project 2 - Multi-Threaded Collatz Stopping Time Generator
+Lance Penaflor
+
+Build and run
+-------------
+make
+./mt-collatz N T [-nolock]
+
+N is the inclusive upper bound, starting at 1. T is the number of worker
+threads. Both must be positive decimal integers no larger than INT_MAX.
+The tested experiment range is N=3000000. Sequence arithmetic uses unsigned
+64-bit values and the histogram contains buckets 0..1000. Arbitrary inputs
+whose sequences overflow 64 bits or exceed 1000 steps are not supported.
+Thread counts must fit available system resources.
+
+Example with separate output streams:
+./mt-collatz 100000 4 > histogram.csv 2> timing.csv
+Use >> and 2>> to append. Stdout contains 1001 stopping_time,frequency rows;
+stderr contains N,T,seconds.nanoseconds with nine fractional digits. Timing
+includes thread creation, computation, and joining, and excludes printing.
+
+Default mode protects both the global work counter and histogram with a
+mutex. -nolock intentionally removes synchronization to demonstrate races;
+multithreaded output in that mode is not reliable.
+
+Significant problems encountered
+--------------------------------
+Two shared resources needed protection: claiming the next starting number
+and incrementing a histogram bucket. Both operations use the same mutex;
+sequence computation occurs outside the critical sections. Without locks,
+all 70 archived multithreaded experiment runs produced incorrect histograms.
+
+The locked four-thread experiment included a 14.682816-second observation.
+Its cause was not measured. It is retained in the ten-run mean rather than
+silently removed; the report discusses the resulting variability.
+
+Final review found that numeric conversion accepted suffixes and could throw
+uncaught errors on malformed input. Complete decimal arguments are now
+validated and conversion errors produce a diagnostic and nonzero exit.
+The global histogram and worker comments now follow the assignment's
+structure, and the Makefile explicitly links pthreads for Linux builds.
+The supplied workbook had data but no embedded charts; the required native
+Excel runtime chart and histogram have now been added.
+
+GDB and Valgrind are not installed on this macOS host. LLDB successfully
+stopped in worker() and showed four worker threads plus the main thread.
+AddressSanitizer and UndefinedBehaviorSanitizer checks passed; these checks
+do not establish a clean Valgrind leak report or absence of data races.
+Linux compilation, GDB, and Valgrind checks remain for the department server.
+
+Deliverables and status
+-----------------------
+mt-collatz.cpp, Makefile, README, report.pdf, and cop4634 proj2.xlsx are
+staged together in deliverables/. Upload individual files as required by
+the assignment. The report draft follows Project 2 Midpoint Report Template.docx. Canvas submission has not been performed.
+
+The workbook contains all histogram buckets, raw measurements, machine
+specifications, averaged runtimes, and two embedded charts. Timing data is
+from October 12, 2026; final checks are from October 16, 2026. The worker
+algorithm is unchanged from the timing experiment.
+
+Developer notes
+---------------
+python3 tools/verify.py
+runs independent-reference histogram comparisons and input/output checks.
+See VALIDATION.md for results and outstanding server checks.
+
+report.md is the editable report source. To regenerate the PDF, install
+reportlab in a Python environment, then run python tools/build_report.py.
+To regenerate workbook charts, install openpyxl and run
+python tools/add_workbook_charts.py. These libraries are not needed to
+compile or run the C++ submission.

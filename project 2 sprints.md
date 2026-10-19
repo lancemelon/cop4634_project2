@@ -51,15 +51,23 @@ Outline only — no implementation. Each task names what needs to exist; you loo
 - [X] Build Excel chart/visual of the Collatz stopping-time histogram
 
 ## Sprint 6 — Report & polish
-- [ ] Write `report.pdf` using the provided template: experiment description + machine specs, histogram visualization, threads-vs-runtime graph (locked vs. unlocked), analysis of parallel speedup, analysis of lock overhead, conclusions
-- [ ] Write `README`: describe any significant problems encountered (or state none)
-- [ ] Code pass: add comments, check structure/readability against grading rubric
-- [ ] Clean build check: compile fresh with no warnings/errors (`-g -Wall`)
+- [X] Write `report.pdf` using the provided template: experiment description + machine specs, histogram visualization, threads-vs-runtime graph (locked vs. unlocked), analysis of parallel speedup, analysis of lock overhead, conclusions
+- [X] Write `README`: describe any significant problems encountered (or state none)
+- [X] Code pass: add comments, check structure/readability against grading rubric
+- [X] Clean build check: compile fresh with no warnings/errors (`-g -Wall`)
 - [ ] Run under valgrind to check for leaks/race-related memory issues
+  - Not installed on this macOS host. AddressSanitizer/UndefinedBehaviorSanitizer verification passed; department Linux/Valgrind checks remain. See `VALIDATION.md`.
 - [ ] Run under gdb at least once to confirm debuggability
-- [ ] Final dry run of grader's test questions: range correctness, multiple threads used, threading affects time, locks prevent races, locks affect time
-- [ ] Package deliverables: `mt-collatz.cpp`, `report.pdf`, histogram+chart `.xlsx`, `README`, `Makefile`
+  - GDB is not installed. LLDB stopped in `worker`, showed four workers plus main, and continued to normal exit. GDB remains for the department server.
+- [X] Final dry run of grader's test questions: range correctness, multiple threads used, threading affects time, locks prevent races, locks affect time
+- [X] Package deliverables: `mt-collatz.cpp`, `report.pdf`, histogram+chart `.xlsx`, `README`, `Makefile`
 - [ ] Upload to Canvas dropbox ahead of deadline
+
+### Sprint 6 draft status — October 16, 2026
+- Six-page report draft: `report.pdf`; editable source: `report.md`. All assignment topics and five figures are included. Draft uses the supplied midpoint template headings and runtime bar chart requirement.
+- Added missing native charts to the existing Excel workbook and verified every archived data cell.
+- Clean build and 78 independent-reference histogram checks passed, as did 13 invalid-input cases and sanitizer checks. Final N=3000000, T=4 matched the archived reference.
+- The five submission files are staged in `deliverables/`. Canvas upload has not been performed.
 
 ## Notes / things to look up as you implement
 - C++ `<thread>` and `<mutex>` usage basics

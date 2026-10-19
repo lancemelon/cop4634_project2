@@ -1,7 +1,11 @@
 *.pdf
+!report.pdf
+!deliverables/report.pdf
+/mt-collatz
 
 mt-collatz.dSYM
 
 temp.md
 
 *.py
+!tools/*.py

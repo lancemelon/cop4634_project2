@@ -6,9 +6,27 @@
 #include <ctime>
 #include <iomanip>
 #include <cstdio>
+#include <limits>
+#include <stdexcept>
 
+// Shared work queue and histogram. The same mutex protects both resources.
+constexpr int max_stopping_time = 1000;
+int tally[max_stopping_time + 1] = {0};
 unsigned long long COUNTER = 1;
 std::mutex shared_mutex;
+
+// Accept complete decimal arguments, rejecting signs, suffixes, and overflow.
+unsigned long long positive_argument(const std::string& text,
+                                     unsigned long long maximum) {
+    if (text.empty() || text.find_first_not_of("0123456789") != std::string::npos) {
+        throw std::invalid_argument("expected a positive decimal integer");
+    }
+    unsigned long long value = std::stoull(text);
+    if (value == 0 || value > maximum) {
+        throw std::out_of_range("argument is outside the supported range");
+    }
+    return value;
+}
 
 timespec elapsed_time(const timespec& start, const timespec& end) {
     timespec elapsed{end.tv_sec - start.tv_sec, end.tv_nsec - start.tv_nsec};
@@ -23,6 +41,7 @@ timespec elapsed_time(const timespec& start, const timespec& end) {
 }
 
 unsigned long long collatz_stopping_time(unsigned long long n) {
+    // 1 has stopping time zero. Use 64-bit intermediates for the tested range.
     unsigned long long steps = 0;
 
     while (n != 1) {
@@ -39,11 +58,12 @@ unsigned long long collatz_stopping_time(unsigned long long n) {
     return steps;
 }
 
-void worker(unsigned long long N, int tally[], bool use_locks) {
+void worker(unsigned long long N, bool use_locks) {
     while (true) {
         unsigned long long n;
         {
             // Protect the limit check, read, and increment as one operation.
+            // -nolock intentionally races here and at the histogram update.
             std::unique_lock<std::mutex> lock(shared_mutex, std::defer_lock);
             if (use_locks) {
                 lock.lock();
@@ -80,25 +100,18 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    if (std::stoull(argv[1]) < 1) {
-        std::cerr << "Please enter a positive integer greater than 0 for the first argument.\n";
+    unsigned long long N;
+    int T;
+    try {
+        // int histogram buckets can hold at most INT_MAX occurrences.
+        N = positive_argument(argv[1], std::numeric_limits<int>::max());
+        T = static_cast<int>(positive_argument(argv[2], std::numeric_limits<int>::max()));
+    } catch (const std::exception& error) {
+        std::cerr << "Invalid N or T: " << error.what() << ".\n";
         return 1;
     }
 
-    if (std::stoi(argv[2]) < 1) {
-        std::cerr << "Please enter a positive integer greater than 0 for the second argument.\n";
-        return 1;
-    }
-
-    const int max_stopping_time = 1000;
-
-    // Arguments
-    unsigned long long N = std::stoull(argv[1]);
-    int T = std::stoi(argv[2]);
     bool use_locks = (argc == 3);
-
-    // Stopping times tally
-    int tally[max_stopping_time + 1] = {0};
 
     std::vector<std::thread> threads;
 
@@ -111,7 +124,7 @@ int main(int argc, char* argv[]) {
 
     // Launch T workers.
     for (int i = 0; i < T; i++) {
-        threads.emplace_back(worker, N, tally, use_locks);
+        threads.emplace_back(worker, N, use_locks);
     }
 
     // Wait for every worker before printing the histogram.
