@@ -6,10 +6,10 @@
 #include <ctime>
 #include <iomanip>
 
-// Constants
+// Constant
 const int MAX_STOPPING_TIME = 1000;
 
-// Global shared variables (as specified by assignment instructions)
+// Global variables 
 unsigned long long COUNTER = 1;
 unsigned long long N = 0;
 int histogram[MAX_STOPPING_TIME + 1] = {0};
@@ -39,8 +39,7 @@ unsigned long long collatz_stopping_time(unsigned long long n) {
 
 /**
  * Worker thread function.
- * Repeatedly claims a number from COUNTER, computes its stopping time,
- * and records the result in the global histogram.
+ * Repeatedly claims a number from COUNTER, computes its stopping time, and records the result in the global histogram.
  */
 void collatz_worker() {
     while (true) {
@@ -55,7 +54,7 @@ void collatz_worker() {
             current_n = COUNTER;
             COUNTER++;
         } else {
-            // Unprotected access (-nolock mode): susceptible to race conditions
+            // Unprotected access (-nolock mode)
             if (COUNTER > N) {
                 break;
             }
@@ -63,7 +62,7 @@ void collatz_worker() {
             COUNTER++;
         }
 
-        // Step 2: Compute stopping time (done in parallel outside of any lock)
+        // Step 2: Compute stopping time
         unsigned long long steps = collatz_stopping_time(current_n);
 
         // Step 3: Record stopping time in the global histogram
@@ -72,7 +71,6 @@ void collatz_worker() {
                 std::lock_guard<std::mutex> lock(histogram_mutex);
                 histogram[steps]++;
             } else {
-                // Unprotected access (-nolock mode)
                 histogram[steps]++;
             }
         }
@@ -114,7 +112,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // 4. Start the real-time clock before spawning threads
+    // 4. Start the real time clock before spawning threads
     struct timespec start_time, end_time;
     clock_gettime(CLOCK_REALTIME, &start_time);
 
